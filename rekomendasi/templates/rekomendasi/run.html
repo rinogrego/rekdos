@@ -1,0 +1,144 @@
+{% extends 'rekomendasi/layout.html' %}
+
+{% load static %}
+
+
+{% block body %}
+<div class="container">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 w-100">
+        <div class="row" id="run-info">
+            <div class="container p-4">
+                <h2 class="text-center mb-3">{{ run.name | title }}</h2>
+                <table class="table table-dark table-striped">
+                    <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td>{{ run.id }}</td>
+                        </tr>
+                        <tr>
+                            <td>Pembuat</td>
+                            <td>{{ run.author | title }} ({{ run.author.get_role_display }})</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>{{ run.get_status_display }}</td>
+                        </tr>
+                        <tr>
+                            <td>Datetime</td>
+                            <td>{{ run.datetime }}</td>
+                        </tr>
+                        <tr>
+                            <td>Jumlah Mahasiswa</td>
+                            <td>{{ run.mahasiswa | length }}</td>
+                        </tr>
+                        <tr>
+                            <td>Jumlah Dosen</td>
+                            <td>{{ run.dosen | length }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" id="run-detail">
+            <h2 class="text-center mb-3">Partisipan</h2>
+            <div class="col-6">
+                <table class="table table-warning table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th>MAHASISWA</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if not run.mahasiswa %}
+                        <tr>
+                            <td>Belum ada mahasiswa yang berpartisipasi</td>
+                        </tr>
+                        {% endif %}
+                        {% for mahasiswa in run.mahasiswa %}
+                        <tr>
+                            <td>{{ mahasiswa | title }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <table class="table table-warning table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th>DOSEN</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if not run.dosen %}
+                        <tr>
+                            <td>Belum ada dosen yang berpartisipasi</td>
+                        </tr>
+                        {% endif %}
+                        {% for dosen in run.dosen %}
+                        <tr>
+                            <td>{{ dosen | title }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if run.status == 'P' and request.user.is_authenticated and took_all_classes %}
+                {% if request.user not in run.mahasiswa and request.user not in run.dosen %}
+                <div class="container text-center p-3">
+                    <a class="btn btn-warning" href="{% url 'run-join' run.id %}">Bergabung dalam Run</a>
+                </div>
+                {% else %}
+                <div class="container text-center p-3">
+                    <a class="btn btn-danger" href="{% url 'run-leave' run.id %}">Keluar dari Run</a>
+                </div>
+                {% endif %}
+            {% endif %}
+            <div class="mb-3"></div>
+        </div>
+        
+        {% if request.user.is_authenticated and run.results.all is not None %}
+        <div class="row" id="run-results">
+            <h2 class="text-center mb-3">Hasil Run</h2>
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                {% if request.user == run.author and run.status == "P" %}
+                <div class="text-center pb-3">
+                    <a class="btn btn-primary" href="{% url 'run-finish' run.id %}">Run</a>
+                </div>
+                {% endif %}
+                {% if run.status == "F" %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mahasiswa</th>
+                            {% for methods in run.results.all.first.get_methods %}
+                            <th> {{ methods | title }} </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- If request.user == user then give color green -->
+                        {% for mahasiswa, methods in run.results.all.first.get_results_as_dict.items %}
+                        <tr>
+                            <td>{{ mahasiswa }}</td>
+                            {% for _, rekdos in methods.items %}
+                            <td>{% for dosen in rekdos %} {{ dosen }} {% endfor %}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+            <div class="col-md-3"></div>
+            <div class="mb-3"></div>
+        </div>
+        {% endif %}
+        
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+{% endblock %}

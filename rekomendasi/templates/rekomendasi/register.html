@@ -1,0 +1,47 @@
+{% extends 'rekomendasi/layout.html' %}
+{% load static %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100 bg-primary">
+
+    <div class="container bg-light w-50 d-flex flex-column">
+        <div class="row mb-3 mt-2">
+            <h1 style="text-align: center;">Register</h1>
+        </div>
+        {% if message %}
+        <div class="row">
+            <div>{{ message }}</div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mt-3">
+                    <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+                </div>
+                <div class="form-group mt-3">
+                    <input class="form-control" type="email" name="email" placeholder="Email Address">
+                </div>
+                <div class="form-group mt-3">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group mt-3">
+                    <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+                </div>
+                <select class="form-select mt-3" aria-label="Default select example">
+                    <option selected disabled value="M">Pilih Role</option>
+                    <option value="M">Mahasiswa</option>
+                    <option value="D">Dosen</option>
+                </select>
+                <input class="btn btn-primary mt-5" type="submit" value="Register">
+            </form>
+        </div>
+        <div class="row d-flex flex-grow-1 mb-2">
+            <div class="container d-flex align-items-end">
+                Already have an account? &nbsp;<a href="{% url 'login' %}">Log In here.</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

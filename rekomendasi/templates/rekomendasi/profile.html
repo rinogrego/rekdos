@@ -1,0 +1,127 @@
+{% extends 'rekomendasi/layout.html' %}
+
+{% load static %}
+
+
+{% block body %}
+
+<div class="container" style="min-height: 90vh">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 w-100">
+        <div class="row mt-3">
+            <h3 class="text-center p-5">Akun {{ user_profile.get_role_display | title }}: {{ user_profile.username | title }}</h3>
+            <div class="col-6">
+                <h4 class="">Informasi {{ user_profile.get_role_display | title }}</h4>
+                <hr>
+                {% if request.user.role == "M" and request.user == user_profile %}
+                <h5>Nilai</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Kelas</th>
+                            <th>Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for kelas in request.user.kelas_diambil.all %}
+                        <tr>
+                            <td>{{ kelas.kelas }}</td>
+                            <td>{{ kelas.nilai }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% elif user_profile.role == "D" %}
+                <h5>Mengajar di Kelas</h5>
+                <table class="table table-borderless">
+                    {% for kelas in user_profile.kelas_diajar.all %}
+                    <tr>
+                        <td>{{kelas.kelas}}</td>
+                    {% empty %}
+                        <td>Tidak mengajar di kelas manapun.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+                
+                <h5>Peminatan</h5>
+                <table class="table table-borderless">
+                    <tr>
+                    {% for peminatan in user_profile.peminatan.all %}
+                        <td>{{peminatan.get_nama_display}}</td>
+                    {% empty %}
+                        <td>Tidak memiliki peminatan apapun.</td>
+                    {% endfor %}
+                    </tr>
+                </table>
+            </div>
+
+            {% if user_profile.id == request.user.id %}
+            <div class="col-6">
+                <div class="container">
+                    {% if request.user.role == "M" %}
+                    <form method="POST" action="{% url 'profile-save' request.user.username %}" class="form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <h4>Input Nilai</h4>
+                            <hr>
+                            {% for kelas in daftar_kelas %}
+                            <div class="mb-2">
+                                <label for="{{kelas}}" class="form-label">{{ kelas }}</label>
+                                <input type="number" class="form-control" id="{{kelas}}" name="{{kelas}}" min="0" max="100">
+                            </div>
+                            {% endfor %}
+                        </div>
+    
+                        <div class="mb-3">
+                            <h4>Input Peminatan</h4>
+                            <hr>
+                            {% for peminatan in daftar_peminatan %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{peminatan}}" id="{{peminatan}}" name="p-{{peminatan}}">
+                                <label class="form-check-label" for="{{peminatan}}">{{peminatan}}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2 mb-3">Submit</button>
+                    </form>
+                    {% endif %}
+    
+                    {% if request.user.role == "D" %}
+                    <form method="POST" action="{% url 'profile-save' request.user.username %}" class="form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <h4>Input Kelas yang diajar</h4>
+                            <hr>
+                            {% for kelas in daftar_kelas %}
+                            <div class="mb-2">
+                                <input class="form-check-input" type="checkbox" value="{{kelas}}" id="{{kelas}}" name="k-{{kelas}}">
+                                <label for="{{kelas}}" class="form-label">{{ kelas }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+    
+                        <div class="mb-3">
+                            <h4>Input Peminatan</h4>
+                            <hr>
+                            {% for peminatan in daftar_peminatan %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{peminatan}}" id="{{peminatan}}" name="p-{{peminatan}}">
+                                <label class="form-check-label" for="{{peminatan}}">{{peminatan}}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2 mb-3">Submit</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+
+{% endblock %}

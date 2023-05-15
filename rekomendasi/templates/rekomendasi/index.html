@@ -1,0 +1,86 @@
+{% extends 'rekomendasi/layout.html' %}
+
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 w-100">
+        <div class="row pt-5 pe-5 ps-5">
+            <div class="d-flex justify-content-between">
+                <h2>Available Runs</h2>
+                <a class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#create-run-modal">Create Run</a>
+            </div>
+            <hr><br>
+            {% if available_runs %}
+            {% for run in available_runs %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Run: {{ run.name | title }}</h5>
+                        Pembuat:  {{ run.author | title }}<br>
+                        Mulai: {{ run.datetime | date }} <br>
+                        <!-- Jumlah Mahasiswa: {{ run.mahasiswa | length }} <br>
+                        Jumlah Dosen: {{ run.dosen | length }} <br> -->
+                        <a href="{% url 'run' run.id %}" class="btn btn-primary mt-2">Check Run</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="container text-center p-3">
+                <h5>There are no available runs yet.</h5>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="row pe-5 ps-5 mt-5 mb-5">
+            <h2>Finished Runs</h2>
+            <hr><br>
+            {% if finished_runs %}
+            {% for run in finished_runs %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Run: {{ run.name | title }}</h5>
+                        Pembuat:  {{ run.author | title }}<br>
+                        Mulai: {{ run.datetime | date }} <br>
+                        <a href="{% url 'run' run.id %}" class="btn btn-primary mt-2">Check Run</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="container text-center p-3">
+                <h5>There are no finished runs yet.</h5>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="create-run-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Run</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'run-create' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="input-nama-run" class="form-label">Nama Run</label>
+                        <input type="text" class="form-control" id="input-nama-run" name="nama-run">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Run</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}

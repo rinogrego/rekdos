@@ -1,0 +1,36 @@
+{% extends 'rekomendasi/layout.html' %}
+{% load static %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100 bg-primary">
+
+    <div class="container bg-light w-50 h-50 d-flex flex-column">
+        <div class="row mb-3 mt-2">
+            <h1 style="text-align: center;">Login</h1>
+        </div>
+        {% if message %}
+        <div class="row">
+            <div>{{ message }}</div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mb-2">
+                    <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                </div>
+                <div class="form-group mb-2">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <input class="btn btn-primary mt-4" type="submit" value="Login">
+            </form>
+        </div>
+        <div class="row d-flex flex-grow-1 mb-2">
+            <div class="container d-flex align-items-end">
+                Don't have an account? &nbsp;<a href="{% url 'register' %}">Register here.</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
