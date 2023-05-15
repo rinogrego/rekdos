@@ -84,7 +84,8 @@
                     </tbody>
                 </table>
             </div>
-            {% if run.status == 'P' and request.user.is_authenticated and took_all_classes %}
+            {% if run.status == 'P' and request.user.is_authenticated %}
+                {% if took_all_classes %}
                 {% if request.user not in run.mahasiswa and request.user not in run.dosen %}
                 <div class="container text-center p-3">
                     <a class="btn btn-warning" href="{% url 'run-join' run.id %}">Bergabung dalam Run</a>
@@ -93,6 +94,7 @@
                 <div class="container text-center p-3">
                     <a class="btn btn-danger" href="{% url 'run-leave' run.id %}">Keluar dari Run</a>
                 </div>
+                {% endif %}
                 {% endif %}
             {% endif %}
             <div class="mb-3"></div>
