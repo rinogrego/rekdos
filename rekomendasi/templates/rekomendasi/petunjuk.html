@@ -1,0 +1,41 @@
+{% extends 'rekomendasi/layout.html' %}
+
+{% load static %}
+
+
+{% block body %}
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="container">
+                <h2 class="text-center p-5">Petunjuk Penggunaan</h2>
+                <h3>Mahasiswa</h3>
+                <hr>
+                <ol class="fs-4 text">
+                    <li>Lakukan login/register terlebih dahulu.</li>
+                    <li>Pergi ke halaman profile, kemudian isi peminatan & nilai pada kelas-kelas yang tersedia.</li>
+                    <li>Kembali ke halaman beranda (pencet REKDOS pada navigasi), kemudian pilih atau buat run yang ingin dilakukan.</li>
+                    <li>Partisipasi dalam run dengan menekan tombol 'Bergabung dalam run'</li>
+                    <li>Run hanya dapat dijalankan oleh pembuat run.</li>
+                    <li>Hasil run dapat dilihat pada halaman run.</li>
+                </ol>
+                <br>
+                <h3>Dosen</h3>
+                <hr>
+                <ol class="fs-4 text">
+                    <li>Lakukan login/register terlebih dahulu.</li>
+                    <li>Pergi ke halaman profile, kemudian isi peminatan & kelasyang diajar dari kelas-kelas yang tersedia.</li>
+                    <li>Kembali ke halaman beranda (pencet REKDOS pada navigasi), kemudian pilih atau buat run yang ingin dilakukan.</li>
+                    <li>Partisipasi dalam run dengan menekan tombol 'Bergabung dalam run'</li>
+                    <li>Run hanya dapat dijalankan oleh pembuat run.</li>
+                    <li>Hasil run dapat dilihat pada halaman run.</li>
+                </ol>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+
+{% endblock %}

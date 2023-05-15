@@ -54,7 +54,12 @@ def register(request):
   if request.method == "POST":
       username = request.POST["username"]
       email = request.POST["email"]
-      role = request.POST["role"]
+      try:
+          role = request.POST["role"]
+      except:
+          return render(request, "rekomendasi/register.html", {
+              "message": "Please provide role"
+          })  
 
       # Ensure password matches confirmation
       password = request.POST["password"]
@@ -222,4 +227,10 @@ def run_finish(request, run_id):
         "run": run,
         "message": message,
         "run_is_finished": True,
+    })
+
+
+def petunjuk(request):
+    return render(request, "rekomendasi/petunjuk.html", {
+        
     })

@@ -18,6 +18,9 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarMainPage">
             <ul class="navbar-nav mr-auto ">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'petunjuk' %}">Petunjuk Pengguna</a>
+              </li>
               {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'profile' user.username %}"><strong>{{ user.username }} ({{ user.get_role_display }})</strong></a>

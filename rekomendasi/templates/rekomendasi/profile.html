@@ -13,6 +13,16 @@
             <div class="col-6">
                 <h4 class="">Informasi {{ user_profile.get_role_display | title }}</h4>
                 <hr>
+                <h5>Peminatan</h5>
+                <table class="table table-borderless">
+                    <tr>
+                    {% for peminatan in user_profile.peminatan.all %}
+                        <td>{{peminatan.get_nama_display}}</td>
+                    {% empty %}
+                        <td>Tidak memiliki peminatan apapun.</td>
+                    {% endfor %}
+                    </tr>
+                </table>
                 {% if request.user.role == "M" and request.user == user_profile %}
                 <h5>Nilai</h5>
                 <table class="table">
@@ -44,16 +54,6 @@
                 </table>
                 {% endif %}
                 
-                <h5>Peminatan</h5>
-                <table class="table table-borderless">
-                    <tr>
-                    {% for peminatan in user_profile.peminatan.all %}
-                        <td>{{peminatan.get_nama_display}}</td>
-                    {% empty %}
-                        <td>Tidak memiliki peminatan apapun.</td>
-                    {% endfor %}
-                    </tr>
-                </table>
             </div>
 
             {% if user_profile.id == request.user.id %}
@@ -62,6 +62,17 @@
                     {% if request.user.role == "M" %}
                     <form method="POST" action="{% url 'profile-save' request.user.username %}" class="form">
                         {% csrf_token %}
+                        <div class="mb-3">
+                            <h4>Input Peminatan</h4>
+                            <hr>
+                            {% for peminatan in daftar_peminatan %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{peminatan}}" id="{{peminatan}}" name="p-{{peminatan}}">
+                                <label class="form-check-label" for="{{peminatan}}">{{peminatan}}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
                         <div class="mb-3">
                             <h4>Input Nilai</h4>
                             <hr>
@@ -73,6 +84,13 @@
                             {% endfor %}
                         </div>
     
+                        <button type="submit" class="btn btn-primary mt-2 mb-3">Submit</button>
+                    </form>
+                    {% endif %}
+    
+                    {% if request.user.role == "D" %}
+                    <form method="POST" action="{% url 'profile-save' request.user.username %}" class="form">
+                        {% csrf_token %}
                         <div class="mb-3">
                             <h4>Input Peminatan</h4>
                             <hr>
@@ -83,13 +101,7 @@
                             </div>
                             {% endfor %}
                         </div>
-                        <button type="submit" class="btn btn-primary mt-2 mb-3">Submit</button>
-                    </form>
-                    {% endif %}
-    
-                    {% if request.user.role == "D" %}
-                    <form method="POST" action="{% url 'profile-save' request.user.username %}" class="form">
-                        {% csrf_token %}
+                        
                         <div class="mb-3">
                             <h4>Input Kelas yang diajar</h4>
                             <hr>
@@ -101,16 +113,6 @@
                             {% endfor %}
                         </div>
     
-                        <div class="mb-3">
-                            <h4>Input Peminatan</h4>
-                            <hr>
-                            {% for peminatan in daftar_peminatan %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="{{peminatan}}" id="{{peminatan}}" name="p-{{peminatan}}">
-                                <label class="form-check-label" for="{{peminatan}}">{{peminatan}}</label>
-                            </div>
-                            {% endfor %}
-                        </div>
                         <button type="submit" class="btn btn-primary mt-2 mb-3">Submit</button>
                     </form>
                     {% endif %}
