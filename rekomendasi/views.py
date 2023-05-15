@@ -140,7 +140,10 @@ def profile_save(request, profile_username):
     
 def run(request, run_id):
     run = Run.objects.get(id=run_id)
-    took_all_classes = request.user.kelas_diambil.all().count() == Kelas.objects.all().count()
+    if request.user.is_authenticated:
+        took_all_classes = request.user.kelas_diambil.all().count() == Kelas.objects.all().count()
+    else:
+        took_all_classes = None
     message = None
     # register participation
     if request.method == "POST":
