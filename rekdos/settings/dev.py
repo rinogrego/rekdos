@@ -1,5 +1,7 @@
 from .base import BASE_DIR
 
+ALLOWED_HOSTS = ["*"]
+
 DEBUG = True
 
 DATABASES = {

@@ -28,8 +28,6 @@ load_dotenv(dotenv_path)
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 
-ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -40,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rekomendasi',
-    'gunicorn'
 ]
 
 MIDDLEWARE = [
