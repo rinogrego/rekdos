@@ -10,3 +10,4 @@ elif DEPLOYMENT == "prod":
     from .prod import *
     
 DEBUG = True
+CSRF_TRUSTED_ORIGINS = ["https://rekdos-production.up.railway.app"]

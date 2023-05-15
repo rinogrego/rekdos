@@ -10,7 +10,6 @@ from .models import User, Kelas, Nilai, Pengajar, Peminatan, Run, Run_Results, P
 import json
 
 # Create your views here.
-@csrf_exempt
 def index(request):
     if request.method == "POST":
         new_run = Run.objects.create(author=request.user, status="P")
@@ -26,7 +25,6 @@ def index(request):
     })
     
 
-@csrf_exempt
 def login_view(request):
   if request.method == "POST":
 
@@ -52,7 +50,6 @@ def logout_view(request):
   return HttpResponseRedirect(reverse("index"))
 
 
-@csrf_exempt
 def register(request):
   if request.method == "POST":
       username = request.POST["username"]
@@ -102,7 +99,6 @@ def profile(request, profile_username):
     })
     
 
-@csrf_exempt
 def profile_save(request, profile_username):
     if request.method == "POST":
         list_peminatan = []
@@ -163,7 +159,6 @@ def run(request, run_id):
     })
     
 
-@csrf_exempt
 @login_required(login_url="login")
 def run_create(request):
     name = request.POST.get("nama-run")
@@ -172,7 +167,6 @@ def run_create(request):
     return HttpResponseRedirect(reverse("run", args=(new_run_id,)))
 
 
-@csrf_exempt
 @login_required(login_url="login")
 def run_join(request, run_id):
     run = Run.objects.get(id=run_id)
@@ -184,7 +178,6 @@ def run_join(request, run_id):
     return HttpResponseRedirect(reverse("run", args=(run_id,)))
 
 
-@csrf_exempt
 @login_required(login_url="login")
 def run_leave(request, run_id):
     run = Run.objects.get(id=run_id)
@@ -196,7 +189,6 @@ def run_leave(request, run_id):
     return HttpResponseRedirect(reverse("run", args=(run_id,)))
     
 
-@csrf_exempt
 @login_required(login_url="login")
 def run_finish(request, run_id):
     run = Run.objects.get(id=run_id)
