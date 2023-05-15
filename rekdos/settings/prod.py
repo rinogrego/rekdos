@@ -1,6 +1,6 @@
 import os
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["rekdos-production.up.railway.app", "127.0.0.1"]
 
 DEBUG = False
 
