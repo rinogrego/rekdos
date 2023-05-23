@@ -1,6 +1,7 @@
 import pprint
 import numpy as np
 import pandas as pd
+import sys
 
 
 def compute_edge_weights(data_dosen, data_mahasiswa, kelas_tersedia):
@@ -137,7 +138,7 @@ def Kruskal(df_bobot):
     return assignment_dict, tree, bucket_1, bucket_2
 
 
-def balanced_hungarian(df_bobot):
+def balanced_hungarian(df_bobot, print_prog=False, filepath=None):
     assert df_bobot.shape[0] == df_bobot.shape[1]
     assert type(df_bobot) == pd.DataFrame
     df_bobot_dosen = df_bobot.columns
@@ -173,11 +174,12 @@ def balanced_hungarian(df_bobot):
         # while zeros in df exists do row scanning and column scanning. if 0 still exists, repeat
         _temp_df_with_line = df_scan.drop(columns=column_line_marker, index=row_line_marker)
         while _temp_df_with_line.where(_temp_df_with_line == 0).count().sum() > 0:
-            # print("\n", "="*100, "\n")
-            # print(_temp_df_with_line)
-            # print("Column line marker:", column_line_marker)
-            # print("Row line marker:", row_line_marker)
-            # print("\n", "="*100, "\n")
+            if print_prog:
+                print("\n", "="*100, "\n")
+                print(_temp_df_with_line)
+                print("Column line marker:", column_line_marker)
+                print("Row line marker:", row_line_marker)
+                print("\n", "="*100, "\n")
             
             _prev_temp_df_with_line = _temp_df_with_line.copy()
             
@@ -206,14 +208,26 @@ def balanced_hungarian(df_bobot):
             
             _temp_df_with_line = df_scan.drop(columns=column_line_marker, index=row_line_marker)
             if _temp_df_with_line.equals(_prev_temp_df_with_line):
-                # print("Matriks tak berubah dari step sebelumnya. Mungkin ada yg free-choices")
+                if print_prog:
+                    print("Matriks tak berubah dari step sebelumnya. Mungkin ada yg free-choices")
                 # ambil pilihan yang pertama dari scan row/kolom
                 for row in _temp_df_with_line.index:
                     _temp_df_with_line = df_scan.drop(columns=column_line_marker, index=row_line_marker)
-                    column = _temp_df_with_line.loc[row, :].where(_temp_df_with_line.loc[row, :] == 0).dropna().index[0]
-                    if (row, column) not in pairs:
-                        column_line_marker.append(column)
-                        pairs.append((row, column))
+                    if print_prog:
+                        print("\n", "="*100, "\n")
+                        print("Percobaan keluar dari loop matrix sama")
+                        print(_temp_df_with_line)
+                        print("Column line marker:", column_line_marker)
+                        print("Row line marker:", row_line_marker)
+                        print("\n", "="*100, "\n")
+                    try:
+                        column = _temp_df_with_line.loc[row, :].where(_temp_df_with_line.loc[row, :] == 0).dropna().index[0]
+                        if (row, column) not in pairs:
+                            column_line_marker.append(column)
+                            pairs.append((row, column))
+                    except:
+                        # no more 0s found in the table/dataframe.
+                        continue
             
                 ### BLOCK - NOT NEEDED HOPEFULLY ###
                 # _temp_df_with_line = df_scan.drop(columns=column_line_marker, index=row_line_marker)
@@ -234,19 +248,23 @@ def balanced_hungarian(df_bobot):
                 ### END BOCK ###
 
         # # if the number of pair equals to the number of row/columns
-        # print("Pairs:", pairs)
+        if print_prog:
+            print("Pairs:", pairs)
         if len(pairs) == df_bobot.shape[0]:
             break
             
         # line drawing in the matrix is illustrated by dropping necessary rows/columns
-        # print(f"DF delete rows: ({row_line_marker})")
-        # print(df_scan)
+        if print_prog:
+            print(f"DF delete rows: ({row_line_marker})")
+            print(df_scan)
         df_undeleted_cell_values = df_scan.drop(index=row_line_marker, axis=0)
-        # print(f"DF delete columns: ({column_line_marker})")
-        # print(df_undeleted_cell_values)
+        if print_prog:
+            print(f"DF delete columns: ({column_line_marker})")
+            print(df_undeleted_cell_values)
         df_undeleted_cell_values = df_undeleted_cell_values.drop(columns=column_line_marker, axis=1)
-        # print("DF undeleted cell values")
-        # print(df_undeleted_cell_values)
+        if print_prog:
+            print("DF undeleted cell values")
+            print(df_undeleted_cell_values)
 
         min_value_of_undeleted_cells = min(df_undeleted_cell_values.min().values)
         # add minimum value to the intersecting points of horizontal and vertical lines
@@ -257,18 +275,36 @@ def balanced_hungarian(df_bobot):
         # remove minimum value from the undeleted cell values
         df_scan.loc[df_undeleted_cell_values.index, df_undeleted_cell_values.columns] -= min_value_of_undeleted_cells
         
-        # print(df_scan)
-        # print("\n", "="*100, "\n")
+        if print_prog:
+            print("Iterasi selesai. 0 still exists in the dataframe. Repeat row/column scanning.")
+            print(df_scan)
+            print("\n", "="*100, "\n")
     return df_scan, pairs
 
 
-def Hungarian(df_bobot):
+def Hungarian(df_bobot, print_prog=False, filepath=None):
+    if filepath is not None:
+        original_stdout = sys.stdout
+        f = open(filepath, "a")
+        sys.stdout = f
+    
+    if print_prog:
+        _text = "="*50 + " Hungarian Dimulai " + "="*50
+        print(_text)
+        print("Data awal")
+        print(df_bobot.to_numpy())
+        print()
+    
     _index_dosen = df_bobot.columns
     _index_mahasiswa = df_bobot.index
     jumlah_dosen = len(df_bobot.columns)
     jumlah_mahasiswa = len(df_bobot.index)
     _df_bobot_proses = df_bobot.copy()
     _df_bobot_proses = _df_bobot_proses.values.max() - _df_bobot_proses
+    if print_prog:
+        print("Data setelah bobot di-reverse")
+        print(_df_bobot_proses.to_numpy())
+        print()
     
     assignment_dict = {}
     for mhs in _index_mahasiswa:
@@ -277,21 +313,34 @@ def Hungarian(df_bobot):
     batch = 0
     num_to_expand = jumlah_mahasiswa - jumlah_dosen
     
-    while num_to_expand > 0:
+    while num_to_expand >= 0:
         batch += 1
         batch_dict = {}
+        if print_prog:
+            _text = f"Batch                     : {batch}"
+            print(_text)
         
         # get rata-rata nilai mahasiswa
         for mhs in _df_bobot_proses.index:
-            batch_dict[mhs] = _df_bobot_proses.loc[mhs, :].sum() / _df_bobot_proses.sum().sum()
+            batch_dict[mhs] = df_bobot.loc[mhs, :].sum() / df_bobot.sum().sum()
+        if print_prog:
+            print()
+            pprint.pprint(batch_dict)
+            print()
         batch_list = sorted(batch_dict.items(), key=lambda x: x[1], reverse=True)
         
         # filter mahasiswa dengan bobot tertinggi
         batch_mhs = dict(batch_list[:jumlah_dosen])
+        if print_prog:
+            _text = f"Mahasiswa Batch {batch}         :" + f"{list(batch_mhs.keys())}"
+            print(_text)
         _df_bobot_proses_hungarian = _df_bobot_proses.loc[list(batch_mhs.keys()), :]
         
         # do hungarian
-        _df_bobot_assignment, _pairs = balanced_hungarian(_df_bobot_proses_hungarian)
+        if print_prog:
+            _text = "\nDataFrame yang diproses\n" + f"{_df_bobot_proses_hungarian}"
+            print(_text)
+        _df_bobot_assignment, _pairs = balanced_hungarian(_df_bobot_proses_hungarian, print_prog=print_prog)
         
         # store the results
         for (mhs, dosen) in _pairs:
@@ -306,22 +355,48 @@ def Hungarian(df_bobot):
         jumlah_mahasiswa = _df_bobot_proses.index.shape[0]
         num_to_expand = jumlah_mahasiswa - jumlah_dosen
         
+    if print_prog:
+        print("\nHasil Sementara")
+        pprint.pprint(assignment_dict)
     # do final hungarian if jumlah_mahasiswa < jumlah_dosen
     if num_to_expand < 0:
+        if print_prog:
+            print()
+            print(f"Batch                     : Terakhir")
         last_batch_dict = {}
         for dosen in _df_bobot_proses.columns:
-            last_batch_dict[dosen] = _df_bobot_proses.loc[:, dosen].sum() / _df_bobot_proses.sum().sum()
+            last_batch_dict[dosen] = df_bobot.loc[:, dosen].sum() / df_bobot.sum().sum()
+        if print_prog:
+            pprint.pprint(last_batch_dict)
         last_batch_list = sorted(last_batch_dict.items(), key=lambda x: x[1], reverse=True)
         
         # filter dosen dengan bobot tertinggi
         batch_dosen = dict(last_batch_list[:jumlah_mahasiswa])
+        if print_prog:
+            print(f"Mahasiswa Batch Terakhir  :", list(_df_bobot_proses.index))
+            print(f"Dosen Batch Terakhir      :", list(batch_dosen.keys()))
         
         # do hungarian
         _df_bobot_proses_hungarian = _df_bobot_proses.loc[:, list(batch_dosen.keys())]
+        if print_prog:
+            print("\nDataFrame yang diproses\n", _df_bobot_proses_hungarian)
         _df_bobot_assignment, _pairs = balanced_hungarian(_df_bobot_proses_hungarian)
         
         # store the results
         for (mhs, dosen) in _pairs:
             assignment_dict[mhs].append(dosen)
+        
+    if print_prog:
+        print("\nHasil Akhir")
+        pprint.pprint(assignment_dict)
+        
+    # hitung bobot
+    bobot = 0
+    for mhs, dosen in assignment_dict.items():
+        for dos in dosen:
+            bobot += df_bobot.loc[mhs, dos]
+            
+    if filepath is not None:
+        sys.stdout = original_stdout
     
-    return assignment_dict
+    return assignment_dict, bobot
