@@ -207,7 +207,7 @@ def run_finish(request, run_id):
         class_objects = Kelas.objects.all()
         df_weight_matrix = construct_inputs(run, class_objects)
         kruskal_result, _, _, _  = Kruskal(df_weight_matrix)
-        hungarian_result = Hungarian(df_weight_matrix)
+        hungarian_result, bobot_hungarian = Hungarian(df_weight_matrix)
         results = {}
         results["kruskal"] = kruskal_result
         results["hungarian"] = hungarian_result
