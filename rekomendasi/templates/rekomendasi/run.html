@@ -58,13 +58,13 @@
                         {% for mahasiswa in run.mahasiswa %}
                         {% if mahasiswa == request.user %}
                         <tr class="table-info">
-                            <td><a href="{% url 'profile' mahasiswa.user.username %}" class="text-decoration-none text-dark"><span>
+                            <td><a href="{% url 'profile' mahasiswa.username %}" class="text-decoration-none text-dark"><span>
                                 {{ mahasiswa | title }}
                             </span></a></td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td><a href="{% url 'profile' mahasiswa.user.username %}" class="text-decoration-none text-dark"><span>
+                            <td><a href="{% url 'profile' mahasiswa.username %}" class="text-decoration-none text-dark"><span>
                                 {{ mahasiswa | title }}
                             </span></a></td>
                         </tr>
